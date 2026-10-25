@@ -1,4 +1,4 @@
-"""Modulbank assignment: verify a database connection and SELECT NOW()."""
+"""Тестовое задание Модульбанка: подключение к БД и запрос SELECT NOW()."""
 
 import os
 
@@ -9,7 +9,7 @@ load_dotenv()
 
 
 def test_postgresql_connection_and_simple_query():
-    """Passes with valid credentials; fails with a wrong password/host/port."""
+    """Проверка проходит с верными параметрами; с неверным паролем — завершается ошибкой."""
     connection_params = {
         "host": os.getenv("POSTGRES_HOST", "localhost"),
         "port": int(os.getenv("POSTGRES_PORT", "55432")),
@@ -24,5 +24,5 @@ def test_postgresql_connection_and_simple_query():
             cursor.execute("SELECT NOW()")
             result = cursor.fetchone()
 
-    assert result is not None, "Query returned no row"
-    assert result[0] is not None, "NOW() returned NULL"
+    assert result is not None, "Запрос не вернул строку"
+    assert result[0] is not None, "Функция NOW() вернула NULL"
