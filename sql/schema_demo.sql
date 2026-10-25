@@ -1,4 +1,6 @@
--- Optional schema for testing SQL exercises locally (not required by the original task).
+-- Учебная структура таблиц для проверки SQL-запросов на локальной базе.
+-- Дополнительный файл: исходное тестовое задание не требует создавать эти таблицы.
+-- Скрипт не заполняет таблицы данными.
 CREATE TABLE IF NOT EXISTS clients (
   client_id bigint PRIMARY KEY,
   full_name text NOT NULL,
