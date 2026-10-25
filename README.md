@@ -1,109 +1,159 @@
-# Modulbank — SQL & Python Internship Test
+# Тестовое задание Модульбанка — SQL и Python
 
-A reproducible technical assignment project for the Modulbank SQL / Data Engineering internship.
+Решение тестового задания на стажировку по направлениям **SQL-разработка / Data Engineering**. Репозиторий содержит семь SQL-запросов и автоматизированную проверку подключения к PostgreSQL с выполнением запроса `SELECT NOW()`.
 
-**Stack:** PostgreSQL 18 (verified locally) or PostgreSQL 17 via Docker Compose; Python 3.10+, psycopg 3, pytest.
+**Стек:** PostgreSQL 18.6 (проверено локально), Python 3.14.7, psycopg 3, pytest 9.1.1. Для альтернативного запуска предусмотрены PostgreSQL 17 и Docker Compose.
 
-## Project contents
+## Структура проекта
 
-- `tests/test_db_connection.py`: connects to PostgreSQL, runs `SELECT NOW()`, and asserts a non-null result.
-- `sql/interview_tasks.sql`: solutions to all seven interview practice SQL tasks.
-- `sql/schema_demo.sql`: optional empty table schema for running the SQL exercises locally.
-- `docker-compose.yml`: local PostgreSQL Docker service.
-- `screenshots/`: add actual success/failure screenshots after running the tests yourself.
+| Файл или папка | Назначение |
+| --- | --- |
+| [`sql/interview_tasks.sql`](sql/interview_tasks.sql) | Решения семи заданий по SQL |
+| [`sql/schema_demo.sql`](sql/schema_demo.sql) | Пример структуры таблиц для локальной проверки запросов |
+| [`tests/test_db_connection.py`](tests/test_db_connection.py) | Автотест подключения и выполнения `SELECT NOW()` |
+| [`screenshots/`](screenshots) | Скриншоты положительного и отрицательного сценариев |
+| [`docker-compose.yml`](docker-compose.yml) | Необязательный вариант запуска PostgreSQL через Docker |
+| [`.env.example`](.env.example) | Пример переменных окружения без настоящих паролей |
+| [`requirements.txt`](requirements.txt) | Зависимости Python |
 
-## Verified results (local PostgreSQL on Windows, 25 October 2026)
+## Полученные результаты
 
-- PostgreSQL 18.6 on `127.0.0.1:5432`, database `modulbank_test`, role `test_user`.
-- `SELECT NOW()` completed successfully using `psql` as `test_user`.
-- Python 3.14.7 and pytest 9.1.1: successful database connection test completed (`1 passed in 0.20s`).
-- Intentionally invalid password: connection refused as expected (`1 failed`); this verifies the negative scenario, not a regression.
-- [Successful pytest run](screenshots/pytest_success.png).
+**Проверено 25 октября 2026 года на Windows 10:**
 
-No credentials or `.env` files should be committed. This project was actually tested using a locally installed PostgreSQL server, *without* Docker. Docker Compose remains an optional alternative.
+- Развёрнут PostgreSQL 18.6 без Docker; адрес `127.0.0.1:5432`, база `modulbank_test`, пользователь `test_user`.
+- Под пользователем `test_user` выполнен запрос `SELECT NOW()`: сервер вернул дату и время.
+- Автотест на Python 3.14.7 и pytest 9.1.1 успешно подключился к базе и проверил результат запроса: **`1 passed in 0.20s`**.
+- При намеренно неверном пароле PostgreSQL отказал в подключении: **`1 failed`**. Это ожидаемое поведение отрицательной проверки, а не неполадка основного сценария.
 
-## Windows PowerShell quick start
+**Подтверждения:**
+- [Успешный запуск автотеста](screenshots/pytest_success.png)
+- [Ожидаемый отказ при неправильном пароле](screenshots/pytest_failed_connection.png)
 
-Prerequisites: Git and Python 3.10+ installed; choose either an existing local PostgreSQL server or Docker Desktop.
+Запуск проекта через Docker Compose предусмотрен конфигурацией, но отдельно не проверялся: фактическая проверка выполнена с PostgreSQL, установленным непосредственно в Windows.
 
-1. Clone and enter the repository:
+## Как запустить на Windows
 
-   ```powershell
-   git clone https://github.com/DimaKimp/modulbank-sql-intern-test.git
-   cd modulbank-sql-intern-test
-   ```
+Понадобятся Git, Python 3.10 или новее и PostgreSQL (локально либо в Docker). Команды ниже выполняются в PowerShell из папки проекта.
 
-2. Copy the safe local example credentials:
+### 1. Получить исходный код
 
-   ```powershell
-   Copy-Item .env.example .env
-   ```
+```powershell
+git clone https://github.com/DimaKimp/modulbank-sql-intern-test.git
+cd modulbank-sql-intern-test
+```
 
-3. Choose a database setup:
+### 2. Настроить подключение
 
-   **Option A — local PostgreSQL (verified):** install/start PostgreSQL; create role `test_user` with a password and database `modulbank_test` owned by that role. Edit `.env` to use `POSTGRES_HOST=127.0.0.1`, `POSTGRES_PORT=5432` and the password you assigned to `test_user`.
+```powershell
+Copy-Item .env.example .env
+notepad .env
+```
 
-   **Option B — Docker Compose:** run:
+Файл `.env` должен содержать действующие параметры базы. Пароль задаётся самостоятельно и **не публикуется в GitHub**.
 
-   ```powershell
-   docker compose up -d
-   docker compose ps
-   ```
+**Вариант А — PostgreSQL установлен в Windows (именно так проверено тестовое).**
 
-   Use the matching `.env.example` port `55432`, and keep host access restricted to localhost.
+Создайте пользователя `test_user` с паролем и базу `modulbank_test`, владельцем которой является этот пользователь. В локальном `.env` укажите:
 
-4. Create a Python virtual environment and install packages:
+```dotenv
+POSTGRES_HOST=127.0.0.1
+POSTGRES_PORT=5432
+POSTGRES_DB=modulbank_test
+POSTGRES_USER=test_user
+POSTGRES_PASSWORD=ВАШ_ЛОКАЛЬНЫЙ_ПАРОЛЬ
+```
 
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-   ```
+Последняя строка — **образец**. Вместо текста `ВАШ_ЛОКАЛЬНЫЙ_ПАРОЛЬ` укажите собственный пароль только в своём файле `.env`.
 
-5. Run the expected successful test:
+**Вариант Б — PostgreSQL через Docker Compose (необязательный).**
 
-   ```powershell
-   .\.venv\Scripts\python.exe -m pytest -v
-   ```
+При работающем Docker Desktop выполните:
 
-   Expected result: `1 passed`. Capture a screenshot for the recruiter.
+```powershell
+docker compose up -d
+docker compose ps
+```
 
-6. Demonstrate an intentional failure using a wrong password:
+Для этого варианта в `.env` используется порт хоста `55432` (как в `.env.example`), а не `5432`. Параметры имени базы, пользователя и пароля должны совпадать с конфигурацией контейнера.
 
-   ```powershell
-   $env:POSTGRES_PASSWORD = 'intentionally_wrong_password'
-   try { .\.venv\Scripts\python.exe -m pytest -q --tb=line } finally { Remove-Item Env:POSTGRES_PASSWORD -ErrorAction SilentlyContinue }
-   ```
+### 3. Установить зависимости Python
 
-   Expected result: `1 failed` (authentication error). An intentionally failing run is expected here. Use concise traceback output and ensure screenshots reveal no credentials.
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
 
-7. Recheck successful execution:
+Если команда `python` не распознаётся, укажите полный путь к установленному `python.exe` при создании виртуального окружения.
 
-   ```powershell
-   .\.venv\Scripts\python.exe -m pytest -v
-   ```
+### 4. Проверить правильное подключение
 
-8. Optionally create the sample schema (choose ONE method):
+```powershell
+.\.venv\Scripts\python.exe -m pytest -v
+```
 
-   ```powershell
-   # Local installation (psql in PATH):
-   psql -h 127.0.0.1 -p 5432 -U test_user -d modulbank_test -f sql/schema_demo.sql
+Ожидается `1 passed`. Тест устанавливает соединение и проверяет, что запрос `SELECT NOW()` возвращает ненулевое значение.
 
-   # Or Docker Compose:
-   Get-Content -Raw sql/schema_demo.sql | docker compose exec -T postgres psql -U test_user -d modulbank_test
-   ```
+### 5. Проверить отрицательный сценарий
 
-   This creates empty tables only. SQL aggregation examples need sample records to return meaningful rows.
+Временно задайте заведомо неверный пароль **только в текущем процессе PowerShell** и запустите тест:
 
-9. When using Docker, stop containers with `docker compose down`. Do **not** add `-v` unless you want to delete the stored database volume. With local PostgreSQL, no Docker shutdown is necessary.
+```powershell
+$env:POSTGRES_PASSWORD = "intentionally_wrong_password"
+try {
+    .\.venv\Scripts\python.exe -m pytest -q --tb=line
+}
+finally {
+    Remove-Item Env:POSTGRES_PASSWORD -ErrorAction SilentlyContinue
+}
+```
 
-## Security
+Ожидается `1 failed` и ошибка аутентификации. Таким способом проверяется, что при неверных учётных данных подключение действительно отклоняется. Локальный файл `.env` не изменяется.
 
-Never commit `.env` or real database passwords. `.gitignore` excludes local configuration and Python environment files. The values in `.env.example` are for local development only.
+### 6. Убедиться, что правильный сценарий снова проходит
 
-## SQL assumptions
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+```
 
-The model uses incoming and outgoing transactions identified by `tx_type = 'in'/'out'`, with nonnegative `amount`. For the top-3 query, `ROW_NUMBER` breaks ties by client ID and returns at most three people per month; replace it with `DENSE_RANK` if all ties must be included.
+Ожидается `1 passed`.
 
-## Verification status
+### 7. Необязательно: создать учебные таблицы для SQL-заданий
 
-A full local PostgreSQL + pytest run was performed on Windows on 25 October 2026. The screenshot above documents the passing test; an invalid-password run also produced the expected authentication failure. Tests using the Docker Compose alternative have not been verified.
+При использовании установленного в Windows `psql`:
+
+```powershell
+psql -h 127.0.0.1 -p 5432 -U test_user -d modulbank_test -f sql/schema_demo.sql
+```
+
+Если команда `psql` не находится, используйте полный путь к `psql.exe`.
+
+При использовании Docker Compose:
+
+```powershell
+Get-Content -Raw sql/schema_demo.sql | docker compose exec -T postgres psql -U test_user -d modulbank_test
+```
+
+Скрипт создаёт **только структуру таблиц, без данных**. Для содержательной проверки агрегирующих SQL-запросов необходимо добавить учебные записи. Выполнение всех семи SQL-запросов на тестовых данных отдельно не подтверждено.
+
+### 8. Остановка Docker (только если он использовался)
+
+```powershell
+docker compose down
+```
+
+Не добавляйте ключ `-v`, если хотите сохранить том с данными PostgreSQL. Для локально установленного PostgreSQL эта команда не нужна.
+
+## Пояснения к SQL-решениям
+
+- В операциях значение `tx_type = 'in'` означает входящую, `tx_type = 'out'` — исходящую транзакцию. Предполагается, что `amount` неотрицателен.
+- В запросе на тройку клиентов с максимальной суммой исходящих операций за месяц используется `ROW_NUMBER()`: при равной сумме порядок определяется по `client_id`, поэтому результат содержит не более трёх клиентов за месяц. Для включения всех клиентов с одинаковым местом можно использовать `DENSE_RANK()`.
+
+## Безопасность
+
+- Настоящие пароли и файл `.env` **не добавляются в репозиторий**.
+- Файл `.gitignore` исключает локальные настройки, виртуальное окружение и временные файлы Python.
+- В отчётных скриншотах не следует показывать пароли и другие секреты.
+
+## Статус выполнения
+
+Положительный и отрицательный сценарии подключения к PostgreSQL фактически проверены на Windows и подтверждены скриншотами. Все семь SQL-решений представлены в исходном файле; их отдельное выполнение на заполненной учебной базе не заявляется.
