@@ -9,6 +9,7 @@
 | Файл или папка | Назначение |
 | --- | --- |
 | [`sql/interview_tasks.sql`](sql/interview_tasks.sql) | Решения семи заданий по SQL |
+| [`docs/theory_preparation.md`](docs/theory_preparation.md) | Подготовка по теории СУБД и SQL из части 1 |
 | [`sql/schema_demo.sql`](sql/schema_demo.sql) | Пример структуры таблиц для локальной проверки запросов |
 | [`tests/test_db_connection.py`](tests/test_db_connection.py) | Автотест подключения и выполнения `SELECT NOW()` |
 | [`screenshots/`](screenshots) | Скриншоты положительного и отрицательного сценариев |
